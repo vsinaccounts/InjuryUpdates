@@ -1,0 +1,35 @@
+name: injury-feed-service
+services:
+- name: api
+  source_dir: /
+  github:
+    repo: vsinaccounts/InjuryUpdates
+    branch: main
+    deploy_on_push: true
+  dockerfile_path: Dockerfile.production
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  health_check:
+    http_path: /api/injury-updates/health
+    initial_delay_seconds: 60
+    period_seconds: 10
+    timeout_seconds: 5
+    success_threshold: 1
+    failure_threshold: 3
+  routes:
+  - path: /
+  envs:
+  - key: SPRING_PROFILES_ACTIVE
+    value: production
+  - key: SERVER_PORT
+    value: "8080"
+  - key: JAVA_OPTS
+    value: "-Xmx512m -Xms256m"
+  alerts:
+  - rule: CPU_UTILIZATION
+    disabled: false
+    value: 80
+  - rule: MEM_UTILIZATION
+    disabled: false
+    value: 80 

@@ -1,0 +1,24 @@
+SpankOdds RabbitMQ Injury Feed Instructions
+
+The SpankOdds InjuryFeed uses RabbitMQ. We will provide you with a basic Java program to connect to our RabbitMQ server and read the data. If you decide to write your feed consumer in a different language, here is the essential information you need to get your connection:
+Host: ec2-3-223-33-62.compute-1.amazonaws.com
+Port: 5671
+Username & Password: These are specific to you and will be sent to you along with these instructions. Do not share these with anyone since only one connection to your queue is allowed
+Virtual Host: “InjuryFeed”
+Queue Name: [your username] + “.InjuryQueue”
+(Note: if your queue name differs slightly from this format, we will send it to you along with these instructions so you know)
+
+
+The feed is sent in JSON format. The specific fields are:
+{
+  "Status": type: String – expected player status for this game,
+  "Injury Type": type: String – reason for injury / injured body part,
+  "Position": type: String – player’s position,
+  "Team": type: String – name of team the player is on,
+  "Rotation": type: Integer – rotation number the injury applies to,
+  "Player Name": type: String – name of player,
+  "League": type: String – which league this game is part of
+}
+
+Example:
+{"Status":"DOWNGRADED TO DOUBTFUL","Injury Type":"Upper Body","Position":"G","Team":"Siena","Rotation":735,"Player Name":"Sean Durugordon","League":"NCAAB"}
