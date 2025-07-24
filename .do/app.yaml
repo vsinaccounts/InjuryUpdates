@@ -3,7 +3,7 @@ services:
 - name: api
   source_dir: /
   github:
-    repo: djstrauss08/InjuryUpdates
+    repo: vsinaccounts/InjuryUpdates
     branch: main
     deploy_on_push: true
   dockerfile_path: Dockerfile.production
