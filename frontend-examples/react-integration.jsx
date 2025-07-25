@@ -8,7 +8,7 @@ const InjuryFeed = () => {
   const [error, setError] = useState(null);
   
   // Replace with your actual Digital Ocean app URL
-  const API_BASE_URL = 'https://your-app-url.ondigitalocean.app/api/injury-updates';
+  const API_BASE_URL = 'https://injury-update-qjaik.ondigitalocean.app/api/injury-updates';
 
   const fetchInjuries = async () => {
     try {
