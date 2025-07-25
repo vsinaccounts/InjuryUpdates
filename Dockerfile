@@ -1,5 +1,18 @@
 # Multi-stage build for production
-FROM maven:3.9-openjdk-17-slim AS build
+FROM openjdk:17-jdk-slim AS build
+
+# Install Maven manually
+RUN apt-get update && \
+    apt-get install -y wget && \
+    wget https://archive.apache.org/dist/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz && \
+    tar -xzf apache-maven-3.9.4-bin.tar.gz -C /opt && \
+    ln -s /opt/apache-maven-3.9.4 /opt/maven && \
+    rm apache-maven-3.9.4-bin.tar.gz && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set Maven environment
+ENV MAVEN_HOME=/opt/maven
+ENV PATH=${MAVEN_HOME}/bin:${PATH}
 
 # Set working directory
 WORKDIR /app
