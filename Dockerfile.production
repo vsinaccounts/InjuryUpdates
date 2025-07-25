@@ -1,5 +1,5 @@
 # Multi-stage build for production
-FROM maven:3.9.4-openjdk-17-slim AS build
+FROM maven:3.9-openjdk-17-slim AS build
 
 # Set working directory
 WORKDIR /app
@@ -19,8 +19,9 @@ RUN mvn clean package -DskipTests -B
 # Runtime stage
 FROM openjdk:17-jdk-alpine
 
-# Add a non-root user for security
-RUN addgroup -g 1001 -S appgroup && \
+# Install wget for health checks and add a non-root user for security
+RUN apk add --no-cache wget && \
+    addgroup -g 1001 -S appgroup && \
     adduser -u 1001 -S appuser -G appgroup
 
 # Set working directory
