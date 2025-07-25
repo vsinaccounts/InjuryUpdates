@@ -43,8 +43,9 @@ WORKDIR /app
 # Copy the jar from build stage
 COPY --from=build /app/target/injury-feed-service-1.0.0.jar app.jar
 
-# Change ownership to non-root user
-RUN chown appuser:appgroup app.jar
+# Create data directory and change ownership to non-root user
+RUN mkdir -p /app/data && \
+    chown -R appuser:appgroup /app
 
 # Switch to non-root user
 USER appuser
