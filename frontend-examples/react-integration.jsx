@@ -100,29 +100,29 @@ const InjuryFeed = () => {
           {injuries.map((injury) => (
             <div key={injury.id} className="injury-card">
               <div className="injury-card-header">
-                <h3>{injury.playerName}</h3>
-                <span className={`injury-status ${getStatusClass(injury.status)}`}>
-                  {injury.status}
+                <h3>{injury['Player Name']}</h3>
+                <span className={`injury-status ${getStatusClass(injury['Status'])}`}>
+                  {injury['Status']}
                 </span>
               </div>
               
               <div className="injury-details">
                 <div className="detail-row">
                   <span className="label">Team:</span>
-                  <span className="value">{injury.team} ({injury.league})</span>
+                  <span className="value">{injury['Team']} ({injury['League']})</span>
                 </div>
                 <div className="detail-row">
                   <span className="label">Position:</span>
-                  <span className="value">{injury.position}</span>
+                  <span className="value">{injury['Position']}</span>
                 </div>
                 <div className="detail-row">
                   <span className="label">Injury:</span>
-                  <span className="value">{injury.injuryType}</span>
+                  <span className="value">{injury['Injury Type']}</span>
                 </div>
-                {injury.rotation && (
+                {injury['Rotation'] && (
                   <div className="detail-row">
                     <span className="label">Rotation:</span>
-                    <span className="value">{injury.rotation}</span>
+                    <span className="value">{injury['Rotation']}</span>
                   </div>
                 )}
               </div>

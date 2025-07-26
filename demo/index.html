@@ -411,35 +411,35 @@
             const injuryList = document.getElementById('injuryList');
             
             injuryList.innerHTML = data.map(injury => {
-                const statusClass = getStatusClass(injury.status);
+                const statusClass = getStatusClass(injury['Status']);
                 const receivedAt = new Date(injury.receivedAt);
                 
                 return `
                     <div class="injury-card">
                         <div class="injury-header">
-                            <div class="player-name">${injury.playerName}</div>
-                            <div class="status-badge ${statusClass}">${injury.status}</div>
+                            <div class="player-name">${injury['Player Name']}</div>
+                            <div class="status-badge ${statusClass}">${injury['Status']}</div>
                         </div>
                         <div class="injury-details">
                             <div class="detail-item">
                                 <div class="detail-label">Team</div>
-                                <div class="detail-value">${injury.team}</div>
+                                <div class="detail-value">${injury['Team']}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">League</div>
-                                <div class="detail-value">${injury.league}</div>
+                                <div class="detail-value">${injury['League']}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Position</div>
-                                <div class="detail-value">${injury.position}</div>
+                                <div class="detail-value">${injury['Position']}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Injury Type</div>
-                                <div class="detail-value">${injury.injuryType}</div>
+                                <div class="detail-value">${injury['Injury Type']}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Rotation</div>
-                                <div class="detail-value">${injury.rotation}</div>
+                                <div class="detail-value">${injury['Rotation']}</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Received</div>

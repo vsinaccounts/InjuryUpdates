@@ -85,17 +85,17 @@
             }
             
             container.innerHTML = injuries.map(injury => {
-                const statusClass = getStatusClass(injury.status);
+                const statusClass = getStatusClass(injury['Status']);
                 const timeAgo = getTimeAgo(injury.receivedAt);
                 
                 return `
                     <div class="injury-card">
-                        <h3>${injury.playerName} 
-                            <span class="injury-status ${statusClass}">${injury.status}</span>
+                        <h3>${injury['Player Name']} 
+                            <span class="injury-status ${statusClass}">${injury['Status']}</span>
                         </h3>
-                        <p><strong>Team:</strong> ${injury.team} (${injury.league})</p>
-                        <p><strong>Position:</strong> ${injury.position}</p>
-                        <p><strong>Injury:</strong> ${injury.injuryType}</p>
+                        <p><strong>Team:</strong> ${injury['Team']} (${injury['League']})</p>
+                        <p><strong>Position:</strong> ${injury['Position']}</p>
+                        <p><strong>Injury:</strong> ${injury['Injury Type']}</p>
                         <small>Updated ${timeAgo}</small>
                     </div>
                 `;
