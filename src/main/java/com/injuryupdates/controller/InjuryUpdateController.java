@@ -126,7 +126,28 @@ public class InjuryUpdateController {
         health.put("service", "Injury Update API");
         health.put("status", "UP");
         health.put("timestamp", LocalDateTime.now());
+        
+        // Add RabbitMQ connection status
+        boolean rabbitConnected = injuryUpdateService.isRabbitMQConnected();
+        health.put("rabbitMQ", rabbitConnected ? "CONNECTED" : "DISCONNECTED");
+        health.put("connectionMethod", injuryUpdateService.getConnectionMethod());
+        
         return ResponseEntity.ok(health);
+    }
+
+    /**
+     * RabbitMQ connection diagnostics
+     */
+    @GetMapping("/rabbitmq-status")
+    public ResponseEntity<Map<String, Object>> getRabbitMQStatus() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("connected", injuryUpdateService.isRabbitMQConnected());
+        status.put("connectionMethod", injuryUpdateService.getConnectionMethod());
+        status.put("lastConnectionAttempt", injuryUpdateService.getLastConnectionAttempt());
+        status.put("connectionErrors", injuryUpdateService.getConnectionErrors());
+        status.put("messagesReceived", injuryUpdateService.getTotalUpdateCount());
+        status.put("timestamp", LocalDateTime.now());
+        return ResponseEntity.ok(status);
     }
 
     /**

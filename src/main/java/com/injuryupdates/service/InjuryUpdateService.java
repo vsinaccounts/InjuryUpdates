@@ -13,6 +13,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class InjuryUpdateService {
@@ -33,26 +34,43 @@ public class InjuryUpdateService {
     private Channel channel;
     private final ObjectMapper objectMapper = new ObjectMapper();
     
+    // Connection status tracking
+    private boolean isConnected = false;
+    private String connectionMethod = "NONE";
+    private LocalDateTime lastConnectionAttempt;
+    private List<String> connectionErrors = new ArrayList<>();
+    
     @PostConstruct
     public void initializeRabbitMQConnection() {
+        lastConnectionAttempt = LocalDateTime.now();
+        connectionErrors.clear();
+        
         // Try multiple connection strategies
         if (connectWithSsl()) {
             logger.info("✅ Connected to RabbitMQ using SSL");
+            isConnected = true;
+            connectionMethod = "SSL";
             return;
         }
         
         if (connectWithPlainConnection()) {
             logger.info("✅ Connected to RabbitMQ using plain connection");
+            isConnected = true;
+            connectionMethod = "PLAIN";
             return;
         }
         
         if (connectToSslPortWithoutSsl()) {
             logger.info("✅ Connected to RabbitMQ using SSL port without SSL");
+            isConnected = true;
+            connectionMethod = "SSL_PORT_NO_SSL";
             return;
         }
         
         logger.error("❌ Failed to connect to RabbitMQ with all methods");
         logger.info("💡 Application will still serve API endpoints with stored data");
+        isConnected = false;
+        connectionMethod = "FAILED";
     }
     
     private boolean connectWithSsl() {
@@ -84,7 +102,9 @@ public class InjuryUpdateService {
             return true;
             
         } catch (Exception e) {
-            logger.warn("SSL connection failed: {}", e.getMessage());
+            String error = "SSL connection failed: " + e.getMessage();
+            logger.warn(error);
+            connectionErrors.add(error);
             return false;
         }
     }
@@ -115,7 +135,9 @@ public class InjuryUpdateService {
             return true;
             
         } catch (Exception e) {
-            logger.warn("Plain connection failed: {}", e.getMessage());
+            String error = "Plain connection failed: " + e.getMessage();
+            logger.warn(error);
+            connectionErrors.add(error);
             return false;
         }
     }
@@ -146,7 +168,9 @@ public class InjuryUpdateService {
             return true;
             
         } catch (Exception e) {
-            logger.warn("SSL port without SSL failed: {}", e.getMessage());
+            String error = "SSL port without SSL failed: " + e.getMessage();
+            logger.warn(error);
+            connectionErrors.add(error);
             return false;
         }
     }
@@ -233,5 +257,22 @@ public class InjuryUpdateService {
     
     public long getTotalUpdateCount() {
         return repository.count();
+    }
+
+    // Public methods for status checking
+    public boolean isRabbitMQConnected() {
+        return isConnected && connection != null && connection.isOpen();
+    }
+    
+    public String getConnectionMethod() {
+        return connectionMethod;
+    }
+    
+    public LocalDateTime getLastConnectionAttempt() {
+        return lastConnectionAttempt;
+    }
+    
+    public List<String> getConnectionErrors() {
+        return new ArrayList<>(connectionErrors);
     }
 } 
