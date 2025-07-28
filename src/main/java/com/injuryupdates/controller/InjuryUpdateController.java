@@ -154,9 +154,27 @@ public class InjuryUpdateController {
      * Search injury updates by multiple criteria
      */
     @GetMapping("/search")
-    public ResponseEntity<List<InjuryUpdate>> searchInjuryUpdates(@RequestParam String player) {
-        List<InjuryUpdate> updates = injuryUpdateService.getInjuryUpdatesByPlayer(player);
-        return ResponseEntity.ok(updates);
+    public ResponseEntity<List<InjuryUpdate>> searchInjuryUpdates(
+            @RequestParam(required = false) String player,
+            @RequestParam(required = false) String team,
+            @RequestParam(required = false) String league,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer rotation,
+            @RequestParam(defaultValue = "24") int hoursBack) {
+        
+        // If specific criteria provided, use them
+        if (player != null && !player.trim().isEmpty()) {
+            return ResponseEntity.ok(injuryUpdateService.getInjuryUpdatesByPlayer(player));
+        }
+        if (team != null && !team.trim().isEmpty()) {
+            return ResponseEntity.ok(injuryUpdateService.getInjuryUpdatesByTeam(team));
+        }
+        if (league != null && !league.trim().isEmpty()) {
+            return ResponseEntity.ok(injuryUpdateService.getInjuryUpdatesByLeague(league));
+        }
+        
+        // Otherwise return recent updates
+        return ResponseEntity.ok(injuryUpdateService.getRecentInjuryUpdates(hoursBack));
     }
 }
 

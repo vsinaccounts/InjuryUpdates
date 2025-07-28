@@ -389,7 +389,16 @@
                 if (player) params.append('playerName', player);
                 params.append('hoursBack', hours);
 
-                const endpoint = params.toString() ? `/search?${params.toString()}` : '/recent?hours=' + hours;
+                // Choose appropriate endpoint
+                let endpoint;
+                if (league || team || player) {
+                    // Use search endpoint when filters are applied
+                    endpoint = `/search?${params.toString()}`;
+                } else {
+                    // Use recent endpoint when no filters
+                    endpoint = `/recent?hours=${hours}`;
+                }
+                
                 injuryData = await makeRequest(endpoint);
 
                 loading.style.display = 'none';
