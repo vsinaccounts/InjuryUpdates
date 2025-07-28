@@ -161,25 +161,11 @@ public class InjuryUpdateController {
 }
 
 // Add a separate controller for the root path
-@RestController
-class RootController {
-
+@Controller
+class HomeController {
+    
     @GetMapping("/")
-    public ResponseEntity<Map<String, Object>> home() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("service", "Injury Update API");
-        response.put("version", "1.0.0");
-        response.put("status", "Running");
-        response.put("endpoints", Map.of(
-            "health", "/api/injury-updates/health",
-            "all_updates", "/api/injury-updates",
-            "recent_updates", "/api/injury-updates/recent",
-            "stats", "/api/injury-updates/stats",
-            "search", "/api/injury-updates/search?player=NAME",
-            "by_league", "/api/injury-updates/league/NBA",
-            "by_team", "/api/injury-updates/team/TEAM_NAME"
-        ));
-        response.put("documentation", "Visit the endpoints above to access injury data");
-        return ResponseEntity.ok(response);
+    public String home() {
+        return "index.html";
     }
 } 
