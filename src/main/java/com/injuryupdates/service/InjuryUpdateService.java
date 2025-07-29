@@ -45,49 +45,33 @@ public class InjuryUpdateService {
         lastConnectionAttempt = LocalDateTime.now();
         connectionErrors.clear();
         
-        // Try multiple connection strategies
-        if (connectWithSsl()) {
-            logger.info("✅ Connected to RabbitMQ using SSL");
+        // Use the same simple connection method as the working standalone Java apps
+        if (connectDirectly()) {
+            logger.info("✅ Connected to RabbitMQ using direct connection (same as standalone apps)");
             isConnected = true;
-            connectionMethod = "SSL";
+            connectionMethod = "DIRECT";
             return;
         }
         
-        if (connectWithPlainConnection()) {
-            logger.info("✅ Connected to RabbitMQ using plain connection");
-            isConnected = true;
-            connectionMethod = "PLAIN";
-            return;
-        }
-        
-        if (connectToSslPortWithoutSsl()) {
-            logger.info("✅ Connected to RabbitMQ using SSL port without SSL");
-            isConnected = true;
-            connectionMethod = "SSL_PORT_NO_SSL";
-            return;
-        }
-        
-        logger.error("❌ Failed to connect to RabbitMQ with all methods");
+        logger.error("❌ Failed to connect to RabbitMQ with direct method");
         logger.info("💡 Application will still serve API endpoints with stored data");
         isConnected = false;
         connectionMethod = "FAILED";
     }
     
-    private boolean connectWithSsl() {
+    private boolean connectDirectly() {
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost(RABBITMQ_HOST);
-            factory.setPort(RABBITMQ_PORT);
+            factory.setPort(RABBITMQ_PORT); // Use 5671 same as standalone apps
             factory.setUsername(USERNAME);
             factory.setPassword(PASSWORD);
             factory.setVirtualHost(VIRTUAL_HOST);
             
-            // Configure SSL properly
-            factory.useSslProtocol("TLSv1.2");
-            
-            // Set connection timeouts
-            factory.setConnectionTimeout(10000);
-            factory.setHandshakeTimeout(10000);
+            // Same simple approach as standalone Java apps - no SSL configuration
+            // Set reasonable timeouts
+            factory.setConnectionTimeout(30000);
+            factory.setHandshakeTimeout(30000);
             factory.setShutdownTimeout(5000);
             
             // Enable automatic recovery
@@ -97,79 +81,13 @@ public class InjuryUpdateService {
             connection = factory.newConnection();
             channel = connection.createChannel();
             
-            logger.info("📡 Listening for messages on queue: {}", QUEUE_NAME);
+            logger.info("📡 Listening for messages on queue: {} (using same method as standalone apps)", QUEUE_NAME);
             startConsuming();
             return true;
             
         } catch (Exception e) {
-            String error = "SSL connection failed: " + e.getMessage();
-            logger.warn(error);
-            connectionErrors.add(error);
-            return false;
-        }
-    }
-    
-    private boolean connectWithPlainConnection() {
-        try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(RABBITMQ_HOST);
-            factory.setPort(5672); // Try standard AMQP port
-            factory.setUsername(USERNAME);
-            factory.setPassword(PASSWORD);
-            factory.setVirtualHost(VIRTUAL_HOST);
-            
-            // Set connection timeouts
-            factory.setConnectionTimeout(10000);
-            factory.setHandshakeTimeout(10000);
-            factory.setShutdownTimeout(5000);
-            
-            // Enable automatic recovery
-            factory.setAutomaticRecoveryEnabled(true);
-            factory.setNetworkRecoveryInterval(5000);
-            
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            
-            logger.info("📡 Listening for messages on queue: {}", QUEUE_NAME);
-            startConsuming();
-            return true;
-            
-        } catch (Exception e) {
-            String error = "Plain connection failed: " + e.getMessage();
-            logger.warn(error);
-            connectionErrors.add(error);
-            return false;
-        }
-    }
-    
-    private boolean connectToSslPortWithoutSsl() {
-        try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(RABBITMQ_HOST);
-            factory.setPort(RABBITMQ_PORT); // Use original SSL port but without SSL
-            factory.setUsername(USERNAME);
-            factory.setPassword(PASSWORD);
-            factory.setVirtualHost(VIRTUAL_HOST);
-            
-            // Set connection timeouts
-            factory.setConnectionTimeout(10000);
-            factory.setHandshakeTimeout(10000);
-            factory.setShutdownTimeout(5000);
-            
-            // Enable automatic recovery
-            factory.setAutomaticRecoveryEnabled(true);
-            factory.setNetworkRecoveryInterval(5000);
-            
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            
-            logger.info("📡 Listening for messages on queue: {}", QUEUE_NAME);
-            startConsuming();
-            return true;
-            
-        } catch (Exception e) {
-            String error = "SSL port without SSL failed: " + e.getMessage();
-            logger.warn(error);
+            String error = "Direct connection failed: " + e.getMessage();
+            logger.error(error, e);
             connectionErrors.add(error);
             return false;
         }
