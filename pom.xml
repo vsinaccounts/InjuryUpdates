@@ -53,10 +53,11 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- RabbitMQ Client -->
+        <!-- RabbitMQ Client - Use same version as working standalone apps -->
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
+            <version>5.25.0</version>
         </dependency>
 
         <!-- Spring Boot Actuator for health checks -->
